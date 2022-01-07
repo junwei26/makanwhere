@@ -19,7 +19,7 @@ def generate_response(data):
         if 'price_level' not in result.keys():
             result['price_level'] = "unknown"
     results_list.sort(key=lambda item : item['rating'], reverse=True)
-    data.results = [result['name'] for result in results_list]
+    data.results = [result['name'] for result in results_list[:10]]
     return generate_results_message(results_list) 
 
 def generate_results_message(results_list, limit=10):

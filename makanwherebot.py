@@ -193,6 +193,8 @@ def make_poll(message):
         if data.results is None:
             bot.send_message(message.chat.id, "Do /getresults first!")
         #data.results is an array of result names
-        bot.send_message(chat_id=message.chat.id, text='\n'.join(data.results)) #placeholder for poll
+        #bot.send_message(chat_id=message.chat.id, text='\n'.join(data.results)) #placeholder for poll
+        print(len(data.results))
+        bot.send_poll(message.chat.id, "Vote for which one you want", data.results, is_anonymous=False, allows_multiple_answers=True)
 
 bot.polling()
