@@ -12,9 +12,10 @@ def generate_response(data):
     locations = data.locations
     cuisines = data.cuisines
     budget = data.budget
-    nested_results_list = [gmaps.places_nearby(find_average_pos(locations),1000, cuisine,'food')["results"] for cuisine in cuisines]
+    nested_results_list = [gmaps.places_nearby(location=find_average_pos(locations),radius=1000, keyword=cuisine, min_price=0, max_price=budget, type='food')["results"] for cuisine in cuisines]
     results_list = [item for result in nested_results_list for item in result]
     for result in results_list:
+        #Not all results have a known price level
         if 'price_level' not in result.keys():
             result['price_level'] = "unknown"
     results_list.sort(key=lambda item : item['rating'], reverse=True)
@@ -43,6 +44,6 @@ testlocation = find_average_pos([junweihouse,ninejlnmembina])
 testdata = BotData()
 testdata.locations=[testlocation]
 testdata.cuisines=["indian", "chinese"]
-testdata.budget=""
+testdata.budget="2"
 
 print(generate_response(testdata))
