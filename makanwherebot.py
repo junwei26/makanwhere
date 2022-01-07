@@ -1,10 +1,13 @@
 import sys
+import os
 import telebot
 import googlemaps
+from dotenv import load_dotenv
 
+load_dotenv()
 
-API_KEY = sys.argv[1]
-BOT_TOKEN = sys.argv[2]
+API_KEY = os.getenv('GOOGLE_API')
+BOT_TOKEN = os.getenv('BOT_TOKEN')
 
 bot = telebot.TeleBot(BOT_TOKEN)
 gmaps = googlemaps.Client(API_KEY)
