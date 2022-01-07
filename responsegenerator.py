@@ -22,11 +22,11 @@ def generate_response(data):
     return generate_results_message(results_list)
 
 def generate_results_message(results_list, limit=10):
-    template = "{0}. [{1}](https://www.google.com/maps/search/?api=1&query={2}&query_place_id={3}) \n Rating: {4} \n Price: {5} \n"
+    template = "{0}. <a href=\"https://www.google.com/maps/search/?api=1&query={2}&query_place_id={3}\">{1}</a> \n <b>Rating:</b> {4} \n <b>Price:</b> {5} \n"
     message = ""
-    for i in range(limit):
+    for i in range(min(limit, len(results_list))):
         result = results_list[i]
-        current_message = template.format(i, result['name'], "_".join(result['name'].split()), result['place_id'], result['rating'], result['price_level'])
+        current_message = template.format(i + 1, result['name'], "_".join(result['name'].split()), result['place_id'], float(result['rating']), result['price_level'])
         message += current_message
 
     return message
@@ -38,12 +38,3 @@ def find_average_pos(locations):
     count = len(locations)
     return (long_sum/count, lat_sum/count)
 
-junweihouse = (1.2907344996919183, 103.82238516757782)
-ninejlnmembina = (1.2847037525600302, 103.82769396757784)
-testlocation = find_average_pos([junweihouse,ninejlnmembina])
-testdata = BotData()
-testdata.locations=[testlocation]
-testdata.cuisines=["indian", "chinese"]
-testdata.budget="2"
-
-print(generate_response(testdata))
