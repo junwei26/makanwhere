@@ -2,6 +2,7 @@ import sys
 import os
 import telebot
 import googlemaps
+from BotData import BotData
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -11,6 +12,8 @@ BOT_TOKEN = os.getenv('BOT_TOKEN')
 
 bot = telebot.TeleBot(BOT_TOKEN)
 gmaps = googlemaps.Client(API_KEY)
+
+hashmap = {}
 
 @bot.message_handler(commands=['address'])
 def address(message):
