@@ -6,6 +6,7 @@ from telebot import types
 import googlemaps
 from BotData import BotData
 from dotenv import load_dotenv
+import responsegenerator
 
 load_dotenv()
 
@@ -120,8 +121,15 @@ def handle_responses(message):
         botData = dict[message.chat.id]
         if botData.isRunning:
             if message.content_type == 'location':
-                botData.locations.append((message.location.longitude, message.location.latitude))
+                botData.locations.append((message.location.latitude, message.location.longitude))
                 bot.send_message(message.chat.id, "Location added!")
+
+
+@bot.message_handler(commands=['getresults'])
+def get_results(message):
+    data = dict[message.chat.id]
+    print(responsegenerator.generate_response(data))
+    bot.send_message(message.chat.id, responsegenerator.generate_response(data))
 
 
 
