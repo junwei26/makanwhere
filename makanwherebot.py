@@ -16,14 +16,17 @@ gmaps = googlemaps.Client(API_KEY)
 
 dict = dict()
 
+
 @bot.message_handler(commands=['start'])
 def start(message):
     if message.chat.id not in dict.keys():
         dict[message.chat.id] = BotData()
     botData = dict[message.chat.id]
     botData.isRunning = True
-    bot.send_message(message.chat.id, "Please share your locations or enter your address")
+    bot.send_message(
+        message.chat.id, "Please share your locations or enter your address")
     print(botData)
+
 
 @bot.message_handler(commands=['stop'])
 def stop(message):
@@ -32,25 +35,44 @@ def stop(message):
     else:
         botData = dict[message.chat.id]
         botData.isRunning = False
-        bot.send_message(message.chat.id, "{0} locations added!".format(len(botData.locations)))
-        bot.send_message(message.chat.id, "the budget is {0}".format(botData.budget))
+        bot.send_message(message.chat.id, "{0} locations added!".format(
+            len(botData.locations)))
+        bot.send_message(
+            message.chat.id, "the budget is {0}".format(botData.budget))
         botData.reset()
+
 
 @bot.callback_query_handler(func=lambda call: True)
 def callback_budget(call):
     if dict.get(call.message.json['chat']['id']) is None:
-        bot.send_message(call.message.json['chat']['id'], "Please use the /start command")    
+        bot.send_message(
+            call.message.json['chat']['id'], "Please use the /start command")
     else:
         botData = dict[call.message.json['chat']['id']]
-        if call.data == "budget_1":
-            botData.budget = 1
-        elif call.data == "budget_2":
-            botData.budget = 2
-        elif call.data == "budget_3":
-            botData.budget = 3
-        elif call.data == "budget_4":
-            botData.budget = 4
-        print(botData.budget)
+        leader_word = call.data.split("_", 1)[0]
+        if leader_word == "budget":
+            if call.data == "budget_1":
+                botData.budget = 1
+            elif call.data == "budget_2":
+                botData.budget = 2
+            elif call.data == "budget_3":
+                botData.budget = 3
+            elif call.data == "budget_4":
+                botData.budget = 4
+            bot.send_message(call.message.json['chat']['id'], "Okay budget has been updated!", reply_markup=None)
+        elif leader_word == "cuisine":
+            cuisine = call.data.split("_", 1)[1]
+            botData.cuisines.remove(cuisine)
+            bot.send_message(call.message.json['chat']['id'], "Okay removed {0}".format(cuisine), reply_markup=None)
+        elif leader_word == "location":
+            location = call.data.split("_", 1)[1]
+            for i in botData.locations:
+                if i[2] == location:
+                    to_be_removed = i
+            botData.locations.remove(to_be_removed)
+            bot.send_message(call.message.json['chat']['id'], "Okay removed {0}".format(location), reply_markup=None)
+
+
 
 @bot.message_handler(commands=['budget'], func=lambda message: True)
 def budget(message):
@@ -66,8 +88,8 @@ def budget(message):
             item3 = types.InlineKeyboardButton('3', callback_data="budget_3")
             item4 = types.InlineKeyboardButton('4', callback_data="budget_4")
             markup.add(item1, item2, item3, item4)
-            bot.send_message(message.chat.id, "Choose a budget:", reply_markup=markup)
-
+            bot.send_message(
+                message.chat.id, "Choose a budget:", reply_markup=markup)
 
 
 @bot.message_handler(commands=['addcuisine'])
@@ -81,11 +103,26 @@ def add_cuisine(message):
                 cuisine = message.text.split(" ", 1)[1]
                 botData.cuisines.append(cuisine)
             except IndexError:
-                bot.send_message(message.chat.id, "Please enter a cuisine following the /addcuisine command")
+                bot.send_message(
+                    message.chat.id, "Please enter a cuisine following the /addcuisine command")
         else:
             bot.send_message(message.chat.id, "Please /start first")
-            
 
+@bot.message_handler(commands=['removecuisine'])
+def remove_cuisine(message):
+    if dict.get(message.chat.id) is None:
+        bot.send_message(message.chat.id, "Please use the /start command")
+    else:
+        botData = dict[message.chat.id]
+        if botData.isRunning:
+           markup = types.InlineKeyboardMarkup()
+           for i in botData.cuisines:
+               markup.add(types.InlineKeyboardButton(i, callback_data="cuisine_"+i))
+           bot.send_message(message.chat.id, "Which cuisine do you want to remove?:", reply_markup=markup)
+        else:
+            bot.send_message(message.chat.id, "Please /start first")
+
+            
 @bot.message_handler(commands=['addlocation'])
 def add_location(message):
     if dict.get(message.chat.id) is None:
@@ -103,7 +140,7 @@ def add_location(message):
                 try:
                     lat = code[0]['geometry']['location']['lat']
                     lng = code[0]['geometry']['location']['lng']
-                    botData.locations.append((lat, lng))
+                    botData.locations.append((lat, lng, address))
                     print(botData.locations)
                     bot.send_message(message.chat.id, "Location added!")
                 except IndexError:
@@ -111,6 +148,21 @@ def add_location(message):
                     return
         else:
             bot.send_message(message.chat.id, "Please /start first")
+
+@bot.message_handler(commands=['removelocation'])
+def remove_location(message):
+    if dict.get(message.chat.id) is None:
+        bot.send_message(message.chat.id, "Please use the /start command")
+    else:
+        botData = dict[message.chat.id]
+        if botData.isRunning:
+           markup = types.InlineKeyboardMarkup()
+           for i in botData.locations:
+               markup.add(types.InlineKeyboardButton(i[2], callback_data="location_"+i[2]))
+           bot.send_message(message.chat.id, "Which location do you want to remove?:", reply_markup=markup)
+        else:
+            bot.send_message(message.chat.id, "Please /start first")
+
 
 @bot.message_handler(content_types=['location'])
 def handle_responses(message):
@@ -120,7 +172,7 @@ def handle_responses(message):
         botData = dict[message.chat.id]
         if botData.isRunning:
             if message.content_type == 'location':
-                botData.locations.append((message.location.longitude, message.location.latitude))
+                botData.locations.append((message.location.longitude, message.location.latitude, "PLaceholder"))
                 bot.send_message(message.chat.id, "Location added!")
 
 
