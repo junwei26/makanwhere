@@ -173,7 +173,8 @@ def handle_responses(message):
         botData = dict[message.chat.id]
         if botData.isRunning:
             if message.content_type == 'location':
-                botData.locations.append((message.location.longitude, message.location.latitude, "PLaceholder"))
+                location_name = gmaps.reverse_geocode(( message.location.latitude, message.location.longitude))[0]['formatted_address'].split(",", -1)[0]
+                botData.locations.append((message.location.latitude, message.location.longitude, location_name))
                 bot.send_message(message.chat.id, "Location added!")
 
 
