@@ -129,7 +129,7 @@ def handle_responses(message):
 def get_results(message):
     data = dict[message.chat.id]
     print(responsegenerator.generate_response(data))
-    bot.send_message(message.chat.id, responsegenerator.generate_response(data))
+    bot.send_message(chat_id=message.chat.id, text=responsegenerator.generate_response(data), parse_mode='HTML')
 
 
 

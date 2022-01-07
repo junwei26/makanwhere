@@ -22,11 +22,11 @@ def generate_response(data):
     return generate_results_message(results_list)
 
 def generate_results_message(results_list, limit=10):
-    template = "{0}. [{1}](https://www.google.com/maps/search/?api=1&query={2}&query_place_id={3}) \n Rating: {4} \n Price: {5} \n"
+    template = "{0}. <a href=\"https://www.google.com/maps/search/?api=1&query={2}&query_place_id={3}\">{1}</a> \n <b>Rating:</b> {4} \n <b>Price:</b> {5} \n"
     message = ""
     for i in range(min(limit, len(results_list))):
         result = results_list[i]
-        current_message = template.format(i + 1, result['name'], "_".join(result['name'].split()), result['place_id'], result['rating'], result['price_level'])
+        current_message = template.format(i + 1, result['name'], "_".join(result['name'].split()), result['place_id'], float(result['rating']), result['price_level'])
         message += current_message
 
     return message
