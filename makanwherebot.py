@@ -20,12 +20,17 @@ dict = dict()
 
 @bot.message_handler(commands=['start'])
 def start(message):
+    welcome_text="""
+Welcome to MakanWhere!\n 
+To get started, click on one of the buttons below to add locations, set your budget, and add cuisines.\n
+After one or more locations have been added, you may select "/getresults" for a list of our recommendations for where to makan.
+    """
     if message.chat.id not in dict.keys():
         dict[message.chat.id] = BotData()
     botData = dict[message.chat.id]
     botData.isRunning = True
     bot.send_message(
-        message.chat.id, "Please share your locations or enter your address")
+        message.chat.id, welcome_text)
     print(botData)
 
 
@@ -107,7 +112,6 @@ def budget(message):
         bot.send_message(message.chat.id, "Please use the /start command")
     else:
         botData = dict[message.chat.id]
-        print(message.chat.id)
         if botData.isRunning:
             markup = types.InlineKeyboardMarkup()
             item1 = types.InlineKeyboardButton('1', callback_data="budget_1")
@@ -296,7 +300,6 @@ def make_poll(message):
             bot.send_message(message.chat.id, "Do /getresults first!")
         #data.results is an array of result names
         #bot.send_message(chat_id=message.chat.id, text='\n'.join(data.results)) #placeholder for poll
-        print(len(data.results))
         bot.send_poll(message.chat.id, "Vote for which one you want", data.results, is_anonymous=False, allows_multiple_answers=True)
 
 bot.polling()
