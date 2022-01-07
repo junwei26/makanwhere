@@ -108,6 +108,17 @@ def budget(message):
             bot.send_message(
                 message.chat.id, "Choose a budget:", reply_markup=markup)
 
+@bot.message_handler(commands=['showbudget'])
+def show_locations(message):
+    if dict.get(message.chat.id) is None:
+        bot.send_message(message.chat.id, "Please use the /start command")
+    else:
+        botData = dict[message.chat.id]
+        if botData.isRunning:
+            bot.send_message(message.chat.id, "Your budget: {0}".format(botData.budget))
+        else:
+            bot.send_message(message.chat.id, "Please /start first")
+
 
 @bot.message_handler(commands=['addcuisine'])
 def add_cuisine(message):
@@ -195,17 +206,17 @@ def remove_location(message):
         else:
             bot.send_message(message.chat.id, "Please /start first")
 
-@bot.message_handler(commands=['showcuisines'])
-def show_cuisine(message):
+@bot.message_handler(commands=['showlocations'])
+def show_locations(message):
     if dict.get(message.chat.id) is None:
         bot.send_message(message.chat.id, "Please use the /start command")
     else:
         botData = dict[message.chat.id]
         if botData.isRunning:
-            all_cuisines="Cuisines added so far:\n"
-            for i in range(len(botData.cuisines)):
-                all_cuisines += "{0}. {1}\n".format(i + 1, botData.cuisines[i])
-            bot.send_message(message.chat.id, all_cuisines)
+            all_locations="Locations added so far:\n"
+            for i in range(len(botData.locations)):
+                all_locations += "{0}. {1}\n".format(i + 1, botData.locations[i][2])
+            bot.send_message(message.chat.id, all_locations)
         else:
             bot.send_message(message.chat.id, "Please /start first")
 
