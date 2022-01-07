@@ -26,7 +26,6 @@ def start(message):
     botData.isRunning = True
     bot.send_message(
         message.chat.id, "Please share your locations or enter your address")
-    print(botData)
 
 
 @bot.message_handler(commands=['stop'])
@@ -96,7 +95,6 @@ def budget(message):
         bot.send_message(message.chat.id, "Please use the /start command")
     else:
         botData = dict[message.chat.id]
-        print(message.chat.id)
         if botData.isRunning:
             markup = types.InlineKeyboardMarkup()
             item1 = types.InlineKeyboardButton('1', callback_data="budget_1")
@@ -183,7 +181,6 @@ def add_location(message):
                     lat = code[0]['geometry']['location']['lat']
                     lng = code[0]['geometry']['location']['lng']
                     botData.locations.append((lat, lng, address))
-                    print(botData.locations)
                     bot.send_message(message.chat.id, "Location added!")
                 except IndexError:
                     bot.send_message(message.chat.id, "Please enter a valid location.")
@@ -256,7 +253,6 @@ def make_poll(message):
             bot.send_message(message.chat.id, "Do /getresults first!")
         #data.results is an array of result names
         #bot.send_message(chat_id=message.chat.id, text='\n'.join(data.results)) #placeholder for poll
-        print(len(data.results))
         bot.send_poll(message.chat.id, "Vote for which one you want", data.results, is_anonymous=False, allows_multiple_answers=True)
 
 bot.polling()
