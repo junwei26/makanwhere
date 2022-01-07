@@ -173,7 +173,7 @@ def handle_responses(message):
         botData = dict[message.chat.id]
         if botData.isRunning:
             if message.content_type == 'location':
-                botData.locations.append((message.location.longitude, message.location.latitude, "PLaceholder"))
+                botData.locations.append((message.location.latitude, message.location.longitude, "PLaceholder"))
                 bot.send_message(message.chat.id, "Location added!")
 
 
@@ -183,6 +183,15 @@ def get_results(message):
     print(responsegenerator.generate_response(data))
     bot.send_message(chat_id=message.chat.id, text=responsegenerator.generate_response(data), parse_mode='HTML')
 
-
+@bot.message_handler(commands=['makepoll'])
+def make_poll(message):
+    if dict.get(message.chat.id) is None:
+        bot.send_message(message.chat.id, "Please use the /start command")
+    else:
+        data = dict[message.chat.id]
+        if data.results is None:
+            bot.send_message(message.chat.id, "Do /getresults first!")
+        #data.results is an array of result names
+        bot.send_message(chat_id=message.chat.id, text='\n'.join(data.results)) #placeholder for poll
 
 bot.polling()

@@ -1,6 +1,7 @@
 class BotData:
     locations = []
     cuisines = []
+    results = []
     budget = 5
     isRunning = False
 
