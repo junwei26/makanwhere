@@ -302,4 +302,4 @@ def make_poll(message):
         #bot.send_message(chat_id=message.chat.id, text='\n'.join(data.results)) #placeholder for poll
         bot.send_poll(message.chat.id, "Vote for which one you want", data.results, is_anonymous=False, allows_multiple_answers=True)
 
-bot.polling()
+bot.infinity_polling()
