@@ -225,8 +225,15 @@ def handle_responses(message):
 @bot.message_handler(commands=['getresults'])
 def get_results(message):
     data = dict[message.chat.id]
-    print(responsegenerator.generate_response(data))
     bot.send_message(chat_id=message.chat.id, text=responsegenerator.generate_response(data), parse_mode='HTML')
+
+@bot.message_handler(commands=['moreresults'])
+def get_results(message):
+    data = dict[message.chat.id]
+    data.searchRadius += 500
+    data.resultDisplayLength += 5
+    bot.send_message(chat_id=message.chat.id, text=responsegenerator.generate_response(data), parse_mode='HTML')
+
 
 @bot.message_handler(commands=['makepoll'])
 def make_poll(message):
