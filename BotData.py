@@ -4,6 +4,8 @@ class BotData:
     results = []
     budget = 5
     isRunning = False
+    searchRadius = 1000
+    resultDisplayLength = 10
 
     def __init__(self):
         pass
@@ -11,6 +13,8 @@ class BotData:
     def reset(self):
         self.locations = []
         self.cuisine = []
-        self.budge = 5
+        self.budget = 5
         self.isRunning = False
+        searchRadius = 500
+        resultDisplayLength = 10
         
