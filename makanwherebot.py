@@ -60,17 +60,32 @@ def callback_budget(call):
                 botData.budget = 3
             elif call.data == "budget_4":
                 botData.budget = 4
+            elif call.data == "budget_cancel":
+                bot.delete_message(call.message.json['chat']['id'], call.message.json['message_id'])
+                bot.send_message(call.message.json['chat']['id'], "Okay budget remains the same.", reply_markup=None)
+                return
+            bot.delete_message(call.message.json['chat']['id'], call.message.json['message_id'])
             bot.send_message(call.message.json['chat']['id'], "Okay budget has been updated!", reply_markup=None)
         elif leader_word == "cuisine":
             cuisine = call.data.split("_", 1)[1]
+            if cuisine == "cancel":
+                bot.delete_message(call.message.json['chat']['id'], call.message.json['message_id'])
+                bot.send_message(call.message.json['chat']['id'], "Okay no cuisine was removed.", reply_markup=None)
+                return
             botData.cuisines.remove(cuisine)
+            bot.delete_message(call.message.json['chat']['id'], call.message.json['message_id'])
             bot.send_message(call.message.json['chat']['id'], "Okay removed {0}".format(cuisine), reply_markup=None)
         elif leader_word == "location":
             location = call.data.split("_", 1)[1]
+            if location == 'cancel':
+                bot.delete_message(call.message.json['chat']['id'], call.message.json['message_id'])
+                bot.send_message(call.message.json['chat']['id'], "Okay no location was removed.", reply_markup=None)
+                return
             for i in botData.locations:
                 if i[2] == location:
                     to_be_removed = i
             botData.locations.remove(to_be_removed)
+            bot.delete_message(call.message.json['chat']['id'], call.message.json['message_id'])
             bot.send_message(call.message.json['chat']['id'], "Okay removed {0}".format(location), reply_markup=None)
 
 
@@ -88,7 +103,8 @@ def budget(message):
             item2 = types.InlineKeyboardButton('2', callback_data="budget_2")
             item3 = types.InlineKeyboardButton('3', callback_data="budget_3")
             item4 = types.InlineKeyboardButton('4', callback_data="budget_4")
-            markup.add(item1, item2, item3, item4)
+            item5 = types.InlineKeyboardButton('cancel', callback_data="budget_cancel")
+            markup.add(item1, item2, item3, item4, item5)
             bot.send_message(
                 message.chat.id, "Choose a budget:", reply_markup=markup)
 
@@ -119,6 +135,7 @@ def remove_cuisine(message):
            markup = types.InlineKeyboardMarkup()
            for i in botData.cuisines:
                markup.add(types.InlineKeyboardButton(i, callback_data="cuisine_"+i))
+           markup.add(types.InlineKeyboardButton("cancel", callback_data="cuisine_cancel"))
            bot.send_message(message.chat.id, "Which cuisine do you want to remove?:", reply_markup=markup)
         else:
             bot.send_message(message.chat.id, "Please /start first")
@@ -157,10 +174,11 @@ def remove_location(message):
     else:
         botData = dict[message.chat.id]
         if botData.isRunning:
-           markup = types.InlineKeyboardMarkup()
-           for i in botData.locations:
+            markup = types.InlineKeyboardMarkup()
+            for i in botData.locations:
                markup.add(types.InlineKeyboardButton(i[2], callback_data="location_"+i[2]))
-           bot.send_message(message.chat.id, "Which location do you want to remove?:", reply_markup=markup)
+            markup.add(types.InlineKeyboardButton("cancel", callback_data="location_cancel"))
+            bot.send_message(message.chat.id, "Which location do you want to remove?:", reply_markup=markup)
         else:
             bot.send_message(message.chat.id, "Please /start first")
 
