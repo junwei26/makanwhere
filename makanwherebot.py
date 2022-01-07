@@ -139,7 +139,20 @@ def remove_cuisine(message):
            bot.send_message(message.chat.id, "Which cuisine do you want to remove?:", reply_markup=markup)
         else:
             bot.send_message(message.chat.id, "Please /start first")
-
+            
+@bot.message_handler(commands=['showcuisines'])
+def show_cuisine(message):
+    if dict.get(message.chat.id) is None:
+        bot.send_message(message.chat.id, "Please use the /start command")
+    else:
+        botData = dict[message.chat.id]
+        if botData.isRunning:
+            all_cuisines="Cuisines added so far:\n"
+            for i in range(len(botData.cuisines)):
+                all_cuisines += "{0}. {1}\n".format(i + 1, botData.cuisines[i])
+            bot.send_message(message.chat.id, all_cuisines)
+        else:
+            bot.send_message(message.chat.id, "Please /start first")
             
 @bot.message_handler(commands=['addlocation'])
 def add_location(message):
@@ -182,6 +195,19 @@ def remove_location(message):
         else:
             bot.send_message(message.chat.id, "Please /start first")
 
+@bot.message_handler(commands=['showcuisines'])
+def show_cuisine(message):
+    if dict.get(message.chat.id) is None:
+        bot.send_message(message.chat.id, "Please use the /start command")
+    else:
+        botData = dict[message.chat.id]
+        if botData.isRunning:
+            all_cuisines="Cuisines added so far:\n"
+            for i in range(len(botData.cuisines)):
+                all_cuisines += "{0}. {1}\n".format(i + 1, botData.cuisines[i])
+            bot.send_message(message.chat.id, all_cuisines)
+        else:
+            bot.send_message(message.chat.id, "Please /start first")
 
 @bot.message_handler(content_types=['location'])
 def handle_responses(message):
