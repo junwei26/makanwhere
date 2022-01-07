@@ -21,11 +21,9 @@ dict = dict()
 @bot.message_handler(commands=['start'])
 def start(message):
     welcome_text="""
-        Welcome to MakanWhere!
-        To get started, click on one of the buttons below to add locations,
-        set your budget, and add cuisines.
-        After one or more locations have been added, you may select "/getresults" for
-        a list of our recommendations for where to makan.
+Welcome to MakanWhere!\n 
+To get started, click on one of the buttons below to add locations, set your budget, and add cuisines.\n
+After one or more locations have been added, you may select "/getresults" for a list of our recommendations for where to makan.
     """
     if message.chat.id not in dict.keys():
         dict[message.chat.id] = BotData()
