@@ -1,9 +1,6 @@
 import googlemaps
 import os
-import pprint
-import json
 from BotData import BotData 
-
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -17,8 +14,22 @@ def generate_response(data):
     budget = data.budget
     nested_results_list = [gmaps.places_nearby(find_average_pos(locations),1000, cuisine,'food')["results"] for cuisine in cuisines]
     results_list = [item for result in nested_results_list for item in result]
+    for result in results_list:
+        if 'price_level' not in result.keys():
+            result['price_level'] = "unknown"
     results_list.sort(key=lambda item : item['rating'], reverse=True)
-    return results_list
+    return generate_results_message(results_list)
+
+def generate_results_message(results_list, limit=10):
+    template = "{0}. [{1}](https://www.google.com/maps/search/?api=1&query={2}&query_place_id={3}) \n Rating: {4} \n Price: {5} \n"
+    message = ""
+    for i in range(limit):
+        result = results_list[i]
+        current_message = template.format(i, result['name'], "_".join(result['name'].split()), result['place_id'], result['rating'], result['price_level'])
+        message += current_message
+
+    return message
+
 
 def find_average_pos(locations):
     long_sum = sum([location[0] for location in locations])
@@ -34,4 +45,4 @@ testdata.locations=[testlocation]
 testdata.cuisines=["indian", "chinese"]
 testdata.budget=""
 
-pprint.pprint(generate_response(testdata))
+print(generate_response(testdata))
