@@ -27,7 +27,6 @@ After one or more locations have been added, you may select "/getresults" for a 
     if message.chat.id not in dict.keys():
         dict[message.chat.id] = BotData()
     bot_data = dict[message.chat.id]
-    bot_data.isRunning = True
     bot.send_message(
         message.chat.id, welcome_text)
     show_commands(message)
@@ -307,11 +306,10 @@ def handle_responses(message):
         bot.send_message(message.chat.id, "Please use the /start command")
     else:
         bot_data = dict[message.chat.id]
-        if bot_data.isRunning:
-            if message.content_type == 'location':
-                location_name = gmaps.reverse_geocode(( message.location.latitude, message.location.longitude))[0]['formatted_address'].split(",", -1)[0]
-                bot_data.locations.append((message.location.latitude, message.location.longitude, location_name))
-                bot.send_message(message.chat.id, "Location added!")
+        if message.content_type == 'location':
+            location_name = gmaps.reverse_geocode(( message.location.latitude, message.location.longitude))[0]['formatted_address'].split(",", -1)[0]
+            bot_data.locations.append((message.location.latitude, message.location.longitude, location_name))
+            bot.send_message(message.chat.id, "Location added!")
 
 
 def get_results(call):
