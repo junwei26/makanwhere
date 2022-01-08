@@ -6,4 +6,8 @@ Our telegram bot enables you to decide where to eat with just a few clicks!
 
 ## Features
 
-## How to set up
+Generate nearby food locations based on users' location, food preferances and budget.
+
+## How to get started
+
+Simply add the @Makan_Where_bot to your telegram group to get started!
