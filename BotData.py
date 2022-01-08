@@ -10,7 +10,7 @@ class BotData:
 
     def reset(self):
         self.locations = []
-        self.cuisine = []
+        self.cuisines = []
         self.results = []
         self.budget = 5
         self.isRunning = False

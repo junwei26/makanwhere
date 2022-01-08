@@ -26,8 +26,8 @@ After one or more locations have been added, you may select "/getresults" for a 
     """
     if message.chat.id not in dict.keys():
         dict[message.chat.id] = BotData()
-    botData = dict[message.chat.id]
-    botData.isRunning = True
+    bot_data = dict[message.chat.id]
+    bot_data.isRunning = True
     bot.send_message(
         message.chat.id, welcome_text)
     show_commands(message)
@@ -59,7 +59,7 @@ def result_commands(message):
 
 
 def quit(message):
-    botData = dict[message.chat.id]
+    bot_data = dict[message.chat.id]
     bot.send_message(message.chat.id, "Goodbye!")
     dict[message.chat.id] = None
 
@@ -70,17 +70,17 @@ def callback_budget(call):
         bot.send_message(
             call.message.json['chat']['id'], "Please use the /start command")
     else:
-        botData = dict[call.message.json['chat']['id']]
+        bot_data = dict[call.message.json['chat']['id']]
         leader_word = call.data.split("_", 1)[0]
         if leader_word == "budget":
             if call.data == "budget_1":
-                botData.budget = 1
+                bot_data.budget = 1
             elif call.data == "budget_2":
-                botData.budget = 2
+                bot_data.budget = 2
             elif call.data == "budget_3":
-                botData.budget = 3
+                bot_data.budget = 3
             elif call.data == "budget_4":
-                botData.budget = 4
+                bot_data.budget = 4
 
             if call.data == "budget_cancel":
                 bot.send_message(
@@ -98,10 +98,10 @@ def callback_budget(call):
                 bot.send_message(
                     call.message.json['chat']['id'], "Okay no cuisine was removed.", reply_markup=None)
             else:
-                botData.cuisines.remove(cuisine)
+                bot_data.cuisines.remove(cuisine)
                 response = "Okay removed {0}.\n Your cuisines are:\n".format(cuisine)
-                for i in range(len(botData.cuisines)):
-                    response += "{0}: {1}\n".format(str(i + 1), botData.cuisines[i])
+                for i in range(len(bot_data.cuisines)):
+                    response += "{0}: {1}\n".format(str(i + 1), bot_data.cuisines[i])
                 bot.send_message(call.message.json['chat']['id'], response, reply_markup=None)
             bot.delete_message(
                 call.message.json['chat']['id'], call.message.json['message_id'])
@@ -113,13 +113,13 @@ def callback_budget(call):
                 bot.send_message(
                     call.message.json['chat']['id'], "Okay no location was removed.", reply_markup=None)
             else:
-                for i in botData.locations:
+                for i in bot_data.locations:
                     if i[2] == location:
                         to_be_removed = i
-                botData.locations.remove(to_be_removed)
+                bot_data.locations.remove(to_be_removed)
                 response = "Okay removed {0}.\nYour locations are:\n".format(location)
-                for i in range(len(botData.locations)):
-                    response += "{0}: {1}\n".format(str(i + 1), botData.locations[i][2])
+                for i in range(len(bot_data.locations)):
+                    response += "{0}: {1}\n".format(str(i + 1), bot_data.locations[i][2])
                 bot.send_message(call.message.json['chat']['id'], 
                     response, reply_markup=None)
             bot.delete_message(
@@ -174,9 +174,9 @@ def set_budget(call):
 
 def show_budget(call):
     print("show_budget call")
-    botData = dict[call.message.chat.id]
+    bot_data = dict[call.message.chat.id]
     bot.send_message(
-        call.message.chat.id, "Your budget: {0}".format(botData.budget))
+        call.message.chat.id, "Your budget: {0}".format(bot_data.budget))
     show_commands(call.message)
 
 
@@ -191,11 +191,11 @@ def add_cuisine(call):
 
 @bot.callback_query_handler(func=lambda message: True)
 def add_cuisine_callback(message):
-    botData = dict[message.json['chat']['id']]
-    botData.cuisines.append(message.json['text'])
+    bot_data = dict[message.json['chat']['id']]
+    bot_data.cuisines.append(message.json['text'])
     response = "Nice! Added {0} to your cuisines!\n Your cuisines are:\n".format(message.json['text'])
-    for i in range(len(botData.cuisines)):
-        response += "{0}: {1}\n".format(str(i + 1), botData.cuisines[i])
+    for i in range(len(bot_data.cuisines)):
+        response += "{0}: {1}\n".format(str(i + 1), bot_data.cuisines[i])
     bot.send_message(message.json['chat']['id'], response)
     show_commands(message)
     print("added cuisine: {0}".format(message.json['text']))
@@ -203,14 +203,14 @@ def add_cuisine_callback(message):
 
 def remove_cuisine(call):
     print("remove_cuisine call")
-    botData = dict[call.message.chat.id]
-    if not botData.cuisines:
+    bot_data = dict[call.message.chat.id]
+    if not bot_data.cuisines:
         bot.send_message(
             call.message.chat.id, "There are no cuisines to remove!")
         show_commands(call.message)
     else:
         markup = types.InlineKeyboardMarkup()
-        for i in botData.cuisines:
+        for i in bot_data.cuisines:
             markup.add(types.InlineKeyboardButton(
                 i, callback_data="cuisine_"+i))
         markup.add(types.InlineKeyboardButton(
@@ -221,10 +221,10 @@ def remove_cuisine(call):
 
 def show_cuisines(call):
     print("show_cuisine call")
-    botData = dict[call.message.chat.id]
+    bot_data = dict[call.message.chat.id]
     all_cuisines = "Cuisines added so far:\n"
-    for i in range(len(botData.cuisines)):
-        all_cuisines += "{0}. {1}\n".format(i + 1, botData.cuisines[i])
+    for i in range(len(bot_data.cuisines)):
+        all_cuisines += "{0}. {1}\n".format(i + 1, bot_data.cuisines[i])
     bot.send_message(call.message.chat.id, all_cuisines)
     show_commands(call.message)
 
@@ -240,17 +240,17 @@ def add_location(call):
 
 @bot.callback_query_handler(func=lambda message: True)
 def add_location_callback(message):
-    botData = dict[message.json['chat']['id']]
+    bot_data = dict[message.json['chat']['id']]
     address = message.json['text']
     code = gmaps.geocode(address)
     try:
         lat = code[0]['geometry']['location']['lat']
         lng = code[0]['geometry']['location']['lng']
-        botData.locations.append((lat, lng, address))
-        print(botData.locations)
+        bot_data.locations.append((lat, lng, address))
+        print(bot_data.locations)
         response = "{0} has been added to the locations!\nYour locations are:\n".format(address)
-        for i in range(len(botData.locations)):
-            response += "{0}: {1}\n".format(str(i+1), botData.locations[i][2])
+        for i in range(len(bot_data.locations)):
+            response += "{0}: {1}\n".format(str(i+1), bot_data.locations[i][2])
         bot.send_message(message.json['chat']['id'], response)
         show_commands(message)
     except IndexError:
@@ -262,23 +262,23 @@ def add_location_callback(message):
 
 def remove_location(call):
     print("remove_location call")
-    botData = dict[call.message.chat.id]
-    if not botData.locations:
+    bot_data = dict[call.message.chat.id]
+    if not bot_data.locations:
         bot.send_message(call.message.chat.id, "There are no locations to remove!")
         show_commands(call.message)
     else:
         markup = types.InlineKeyboardMarkup()
-        for i in botData.locations:
+        for i in bot_data.locations:
             markup.add(types.InlineKeyboardButton(i[2], callback_data="location_"+i[2]))
         markup.add(types.InlineKeyboardButton("cancel", callback_data="location_cancel"))
         bot.send_message(call.message.chat.id, "Which location do you want to remove?", reply_markup=markup)
 
 def show_locations(call):
     print("show_locations call")
-    botData = dict[call.message.chat.id]
+    bot_data = dict[call.message.chat.id]
     all_locations="Locations added so far:\n"
-    for i in range(len(botData.locations)):
-        all_locations += "{0}. {1}\n".format(i + 1, botData.locations[i][2])
+    for i in range(len(bot_data.locations)):
+        all_locations += "{0}. {1}\n".format(i + 1, bot_data.locations[i][2])
     bot.send_message(call.message.chat.id, all_locations)
     show_commands(call.message)
 
@@ -287,11 +287,11 @@ def handle_responses(message):
     if dict.get(message.chat.id) is None:
         bot.send_message(message.chat.id, "Please use the /start command")
     else:
-        botData = dict[message.chat.id]
-        if botData.isRunning:
+        bot_data = dict[message.chat.id]
+        if bot_data.isRunning:
             if message.content_type == 'location':
                 location_name = gmaps.reverse_geocode(( message.location.latitude, message.location.longitude))[0]['formatted_address'].split(",", -1)[0]
-                botData.locations.append((message.location.latitude, message.location.longitude, location_name))
+                bot_data.locations.append((message.location.latitude, message.location.longitude, location_name))
                 bot.send_message(message.chat.id, "Location added!")
 
 
