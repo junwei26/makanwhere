@@ -1,6 +1,5 @@
-import googlemaps
 import os
-from BotData import BotData 
+import googlemaps
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -12,11 +11,14 @@ def generate_response(data):
     locations = data.locations
     cuisines = data.cuisines
     budget = data.budget
-    searchRadius = data.searchRadius
-    resultDisplayLength = data.resultDisplayLength
-    
-    nested_results_list = [gmaps.places_nearby(location=find_average_pos(locations),radius=searchRadius, keyword=cuisine, min_price=0, max_price=budget, type='food')["results"] for cuisine in cuisines]
-    results_list = [item for result in nested_results_list for item in result]
+    search_radius = data.searchRadius
+    result_display_length = data.resultDisplayLength
+
+    if not data.cuisines:
+        results_list = gmaps.places_nearby(location=find_average_pos(locations),radius=search_radius, min_price=0, max_price=budget, type='food')["results"]
+    else:
+        nested_results_list = [gmaps.places_nearby(location=find_average_pos(locations),radius=search_radius, keyword=cuisine, min_price=0, max_price=budget, type='food')["results"] for cuisine in cuisines]
+        results_list = [item for result in nested_results_list for item in result]
 
     for result in results_list:
         #Not all results have a known price level
@@ -24,8 +26,8 @@ def generate_response(data):
             result['price_level'] = "unknown"
 
     results_list.sort(key=lambda item : item['rating'], reverse=True)
-    data.results = [result['name'] for result in results_list[:10]]
-    return generate_results_message(results_list, resultDisplayLength) 
+    data.results = [result['name'] for result in results_list[:result_display_length]]
+    return generate_results_message(results_list, result_display_length) 
 
 def generate_results_message(results_list, limit):
     template = "{0}. <a href=\"https://www.google.com/maps/search/?api=1&query={2}&query_place_id={3}\">{1}</a> \n <b>Rating:</b> {4} \n <b>Price:</b> {5} \n"

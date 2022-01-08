@@ -11,8 +11,9 @@ class BotData:
     def reset(self):
         self.locations = []
         self.cuisine = []
+        self.results = []
         self.budget = 5
         self.isRunning = False
-        searchRadius = 500
-        resultDisplayLength = 10
+        self.searchRadius = 1000
+        self.resultDisplayLength = 10
         
