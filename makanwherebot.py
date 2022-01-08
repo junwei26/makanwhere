@@ -58,9 +58,8 @@ def result_commands(message):
 
 
 def quit(message):
-    bot_data = dict[message.chat.id]
     bot.send_message(message.chat.id, "Goodbye!")
-    dict[message.chat.id] = None
+    del dict[message.chat.id]
 
 
 @bot.callback_query_handler(func=lambda call: True)
